@@ -62,19 +62,18 @@ Stats
 - [x] has method `initPlayerBoard()` to initiate `playerBoard` based on the result of each player against dealer
 - [x] has method `updateDealerStats()` to update `dealerStats` calculation based on `playerBoard`
 
-- [ ] `pot` is property of `Int` under `Stats`
-- [ ] `collectBets()` get sum of bet values from all players
-- [ ] refactor `dealerStats` to work with "Earnings"
-- [ ] refactor `updateDealerStats()` to work with `pot`
-- [ ] `payOutPot()`
-
-- [ ] game result -> has blackjack
-    - [ ] player blackjack, dealer non -> player += bet * 1.5
-    - [ ] player non, dealer blackjack -> player -= bet
-    - [ ] player blackjack, dealer blackjack -> player += 0
-- [ ] game result -> has bust
-    - [ ] player bust, dealer non -> player -= bet
-    - [ ] player non, dealer bust -> player += bet
+- [x] `pot` is property of `Int` under `Stats`
+- [x] `collectBets()` get sum of bet values from all players
+- [ ] `payOutPotToEarnings()` calculate and return earning map between player and dealer
+  - [ ] TODO: refactor the function into separate
+  - [ ] game result -> dealer has blackjack
+    - [ ] player non, dealer blackjack -> player earning -= bet
+    - [ ] player blackjack, dealer blackjack -> player earning = 0; pot -= bet
+  - [ ] game result -> dealer has no blackjack
+    - [ ] player blackjack -> player earning += bet * 1.5; pot -= bet + (bet * 1.5)
+    - [ ] player win -> player earning += bet; pot -= bet * 2
+    - [ ] player lose -> player earning -= bet;
+    - [ ] player tie -> player earning = 0; pot -= bet
 
 ### View
 
@@ -98,7 +97,7 @@ OutputView
 - [x] "Dealer draws one more card due to having 16 or less."
     - [x] display the message everytime when dealer get new card
 - [x] "{name}'s cards: {hand} – Total: {score}"
-- [ ] "## Final Earnings"
+- [x] "## Final Earnings"
     - "Dealer: 10000"
     - "{player.name}: 10000"
     - "{player.name}: -20000"

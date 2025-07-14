@@ -1,16 +1,7 @@
 package blackjack.model
 
 class Stats(val players: List<Player>, val dealer: Dealer) {
-    val playerBoard: Map<Player, Result> get() = calculatePlayerBoard()
-
-    private var _dealerStats = emptyMap<Result, Int>()
-    val dealerStats: Map<Result, Int> get() = _dealerStats
-
-    val dealerScore: Int get() = dealer.calculateHand()
-
-    init {
-        _dealerStats = mapOf(Result.WIN to 0, Result.LOSE to 0, Result.TIE to 0)
-    }
+    val earningMap: Map<Playable, Int> get() = payOutPotToEarnings()
 
     private fun calculatePlayerBoard(): Map<Player, Result> {
         val board = mutableMapOf<Player, Result>()
@@ -23,7 +14,9 @@ class Stats(val players: List<Player>, val dealer: Dealer) {
         board: MutableMap<Player, Result>,
     ) {
         val playerScore = player.calculateHand()
+        val dealerScore = dealer.calculateHand()
         when {
+            player.isBlackjack() -> board[player] = Result.BLACKJACK
             player.isBust() -> board[player] = Result.LOSE
             dealer.isBust() -> board[player] = Result.WIN
             playerScore > dealerScore -> board[player] = Result.WIN
@@ -32,14 +25,58 @@ class Stats(val players: List<Player>, val dealer: Dealer) {
         }
     }
 
-    fun updateDealerStats() {
-        val stats = _dealerStats.toMutableMap()
-        val winCount = playerBoard.values.count { it == Result.LOSE }
-        val loseCount = playerBoard.values.count { it == Result.WIN }
-        val tieCount = playerBoard.values.count { it == Result.TIE }
-        stats[Result.WIN] = winCount
-        stats[Result.LOSE] = loseCount
-        stats[Result.TIE] = tieCount
-        _dealerStats = stats.toMap()
+    // TODO: add case for dealer with blackjack
+    fun payOutPotToEarnings(): Map<Playable, Int> {
+        val playerBoard = calculatePlayerBoard()
+        var pot = players.sumOf { it.bet }
+        val map = mutableMapOf<Playable, Int>()
+        val isDealerBlackjack = dealer.isBlackjack()
+        if (isDealerBlackjack) {
+            players.forEach { player ->
+                when {
+                    playerBoard[player] == Result.BLACKJACK -> {
+                        val amount = player.bet
+                        map[player] = 0
+                        pot -= amount
+                    }
+                    playerBoard[player] == Result.LOSE -> {
+                        val amount = player.bet
+                        map[player] = -amount
+                    }
+                    playerBoard[player] == Result.TIE -> {
+                        val amount = player.bet
+                        map[player] = 0
+                        pot -= amount
+                    }
+                }
+            }
+            map[dealer] = pot
+            return map.toMap()
+        }
+        players.forEach { player ->
+            when {
+                playerBoard[player] == Result.BLACKJACK -> {
+                    val amount = (player.bet * 1.5).toInt()
+                    map[player] = amount
+                    pot -= amount + player.bet
+                }
+                playerBoard[player] == Result.WIN -> {
+                    val amount = player.bet
+                    map[player] = amount
+                    pot -= amount * 2
+                }
+                playerBoard[player] == Result.LOSE -> {
+                    val amount = player.bet
+                    map[player] = -amount
+                }
+                playerBoard[player] == Result.TIE -> {
+                    val amount = player.bet
+                    map[player] = 0
+                    pot -= amount
+                }
+            }
+        }
+        map[dealer] = pot
+        return map.toMap()
     }
 }
