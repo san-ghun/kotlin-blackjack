@@ -12,6 +12,16 @@ object InputView {
         return trimmedInput
     }
 
+    fun readPlayerBettingAmount(name: String): Int {
+        println("\nEnter $name’s betting amount:")
+        val input = readln().trim()
+        require(input.isNotBlank()) { "Please enter the amount of betting." }
+        val userInput = input.toIntOrNull() ?: throw IllegalArgumentException("Please enter a valid amount as number.")
+        require(userInput > 0) { "Please enter a valid amount." }
+        require(userInput % 100 == 0) { "Please enter a valid amount, dividable to 100." }
+        return userInput
+    }
+
     fun readYesOrNo(name: String): Boolean {
         println("\nWould $name like to draw another card? (y for yes, n for no)")
         val input = readln().trim()

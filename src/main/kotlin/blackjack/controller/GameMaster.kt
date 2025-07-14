@@ -13,6 +13,7 @@ object GameMaster {
 
     fun run() {
         takePlayerNames()
+        takePlayerBets()
         initHands()
         OutputView.displayInitialState(playerManager.players, dealer)
         askPlayersToHit()
@@ -25,6 +26,14 @@ object GameMaster {
     private fun takePlayerNames() {
         val names = InputView.retryable { InputView.readPlayerNames() }
         names.forEach { name -> playerManager.addPlayer(name) }
+    }
+
+    private fun takePlayerBets() {
+        val players = playerManager.players
+        players.forEach { player ->
+            val bettingAmount = InputView.readPlayerBettingAmount(player.name)
+            player.placeBets(bettingAmount)
+        }
     }
 
     private fun initHands() {

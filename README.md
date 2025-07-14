@@ -66,7 +66,7 @@ Stats
 - [ ] `collectBets()` get sum of bet values from all players
 - [ ] refactor `dealerStats` to work with "Earnings"
 - [ ] refactor `updateDealerStats()` to work with `pot`
-- [ ] `payOutPot()` 
+- [ ] `payOutPot()`
 
 - [ ] game result -> has blackjack
     - [ ] player blackjack, dealer non -> player += bet * 1.5
@@ -81,8 +81,8 @@ Stats
 InputView
 
 - [x] "Enter the names of the players (comma-separated):"
-- [ ] "Enter {name}’s betting amount:"
-    - [ ] condition. betting value should be dividable to 100, to prevent type conversion. `Int` -> `Double`
+- [x] "Enter {name}’s betting amount:"
+    - [x] condition. betting value should be dividable to 100, to prevent type conversion like `Int` -> `Double`
 - [x] "Would {name} like to draw another card? (y for yes, n for no)"
 - [x] add validation for duplicated names in `readPlayerNames()`
 
@@ -99,9 +99,9 @@ OutputView
     - [x] display the message everytime when dealer get new card
 - [x] "{name}'s cards: {hand} – Total: {score}"
 - [ ] "## Final Earnings"
-  - "Dealer: 10000"
-  - "{player.name}: 10000"
-  - "{player.name}: -20000"
+    - "Dealer: 10000"
+    - "{player.name}: 10000"
+    - "{player.name}: -20000"
 
 ### Controller
 
