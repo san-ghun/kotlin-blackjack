@@ -3,6 +3,7 @@ package blackjack.model
 interface Playable {
     val name: String
     val hand: Hand
+    val bet: Int
 
     fun requestCard(condition: () -> Boolean): Boolean {
         return condition()
@@ -24,5 +25,6 @@ interface Playable {
 
     companion object {
         const val BUST_LIMIT = 21
+        const val INITIAL_BETTING_AMOUNT = 0
     }
 }

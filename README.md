@@ -45,6 +45,9 @@ Player: Playable
 - [x] follows interface `Playable`
 - [x] has method `calculateHand()` to calculate score of hand with `Rank` of `Card`
     - TODO: MUST have to find a solid logic for calculation
+- [x] `bet` is property `Int` under `Playable`
+- [x] init player bet -> bet = 0
+- [x] player `placeBets(amount: Int)` -> (+ betting amount)
 
 Dealer: Playable
 
@@ -59,33 +62,27 @@ Stats
 - [x] has method `initPlayerBoard()` to initiate `playerBoard` based on the result of each player against dealer
 - [x] has method `updateDealerStats()` to update `dealerStats` calculation based on `playerBoard`
 
-Bet
-
-- [ ] is property `Int` under `Playable`
-- [ ] init player bet -> bet = 0
-- [ ] take player bet -> (+ betting value)
-  - [ ] condition. betting value should be dividable to 100, to prevent type conversion. `Int` -> `Double`
-- [ ] push players' bet -> Pot()
-- [ ] game result -> has blackjack
-  - [ ] player blackjack, dealer non -> player += bet * 1.5
-  - [ ] player non, dealer blackjack -> player -= bet
-  - [ ] player blackjack, dealer blackjack -> player += 0
-- [ ] game result -> has bust
-  - [ ] player bust, dealer non -> player -= bet
-  - [ ] player non, dealer bust -> player += bet
-
-Pot
-
-- [ ] is property of `Int` under `Stats`
+- [ ] `pot` is property of `Int` under `Stats`
+- [ ] `collectBets()` get sum of bet values from all players
 - [ ] refactor `dealerStats` to work with "Earnings"
 - [ ] refactor `updateDealerStats()` to work with `pot`
-- [ ] `distributePot()`
+- [ ] `payOutPot()` 
+
+- [ ] game result -> has blackjack
+    - [ ] player blackjack, dealer non -> player += bet * 1.5
+    - [ ] player non, dealer blackjack -> player -= bet
+    - [ ] player blackjack, dealer blackjack -> player += 0
+- [ ] game result -> has bust
+    - [ ] player bust, dealer non -> player -= bet
+    - [ ] player non, dealer bust -> player += bet
 
 ### View
 
 InputView
 
 - [x] "Enter the names of the players (comma-separated):"
+- [ ] "Enter {name}’s betting amount:"
+    - [ ] condition. betting value should be dividable to 100, to prevent type conversion. `Int` -> `Double`
 - [x] "Would {name} like to draw another card? (y for yes, n for no)"
 - [x] add validation for duplicated names in `readPlayerNames()`
 
@@ -101,10 +98,10 @@ OutputView
 - [x] "Dealer draws one more card due to having 16 or less."
     - [x] display the message everytime when dealer get new card
 - [x] "{name}'s cards: {hand} – Total: {score}"
-- [x] "## Final Results"
-    - "Dealer: 1 Win 1 Lose"
-    - "{player.name}: Win"
-    - "{player.name}: Lose"
+- [ ] "## Final Earnings"
+  - "Dealer: 10000"
+  - "{player.name}: 10000"
+  - "{player.name}: -20000"
 
 ### Controller
 

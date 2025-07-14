@@ -2,8 +2,8 @@ package blackjack.model
 
 data class Dealer(override val name: String = "Dealer") : Playable {
     private var _hand = Hand()
-    override val hand: Hand
-        get() = _hand
+    override val hand: Hand get() = _hand
+    override val bet = Playable.INITIAL_BETTING_AMOUNT
 
     override fun drawCard(newCard: PlayingCard) {
         val deque = ArrayDeque(hand.cards)

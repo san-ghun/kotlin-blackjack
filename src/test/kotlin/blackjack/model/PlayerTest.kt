@@ -14,6 +14,13 @@ class PlayerTest {
     }
 
     @Test
+    fun `Player has a property 'bettingAmount' and init with dedicated value`() {
+        val expected = Playable.INITIAL_BETTING_AMOUNT
+        val actual = Player("Player").bet
+        assertEquals(expected, actual)
+    }
+
+    @Test
     fun `requestCard() - request true`() {
         val player = Player("player")
         val request = player.requestCard { true }
@@ -150,5 +157,13 @@ class PlayerTest {
         player.drawCard(Fixture.DIAMONDS_JACK)
         player.drawCard(Fixture.DIAMONDS_ACE)
         assertEquals(true, player.isBlackjack())
+    }
+
+    @ParameterizedTest(name = "Player - bet integer value {0}")
+    @ValueSource(ints = [1000, 2000, 15000, 30000])
+    fun `placeBets() - player can place bets`(candidate: Int) {
+        val player = Player("player")
+        player.placeBets(candidate)
+        assertEquals(candidate, player.bet)
     }
 }
