@@ -1,6 +1,6 @@
 # kotlin-blackjack
 
-### Reminders for Improvement from Reviewer --@Wordbe
+### Reminders for Improvement from Reviewer --Suno (@Wordbe)
 
 - Use backing properties only when truly necessary.
     - They can make the code harder to read and understand.
@@ -38,6 +38,7 @@ Playable (interface)
 - [x] has method `drawCard()` to take card given by a card manager
 - [x] has method `calculateHand()` to calculate score of hand
 - [x] has method `isBust()` to figure out the player of the dealer is bust or not
+- [x] `isBlackjack()` to figure out a `Playable` is blackjack or not
 
 Player: Playable
 
@@ -57,6 +58,28 @@ Stats
 - [x] has `dealerStats: Map<String, Int>` having key as "win", "lose", "tie" and value as count
 - [x] has method `initPlayerBoard()` to initiate `playerBoard` based on the result of each player against dealer
 - [x] has method `updateDealerStats()` to update `dealerStats` calculation based on `playerBoard`
+
+Bet
+
+- [ ] is property `Int` under `Playable`
+- [ ] init player bet -> bet = 0
+- [ ] take player bet -> (+ betting value)
+  - [ ] condition. betting value should be dividable to 100, to prevent type conversion. `Int` -> `Double`
+- [ ] push players' bet -> Pot()
+- [ ] game result -> has blackjack
+  - [ ] player blackjack, dealer non -> player += bet * 1.5
+  - [ ] player non, dealer blackjack -> player -= bet
+  - [ ] player blackjack, dealer blackjack -> player += 0
+- [ ] game result -> has bust
+  - [ ] player bust, dealer non -> player -= bet
+  - [ ] player non, dealer bust -> player += bet
+
+Pot
+
+- [ ] is property of `Int` under `Stats`
+- [ ] refactor `dealerStats` to work with "Earnings"
+- [ ] refactor `updateDealerStats()` to work with `pot`
+- [ ] `distributePot()`
 
 ### View
 

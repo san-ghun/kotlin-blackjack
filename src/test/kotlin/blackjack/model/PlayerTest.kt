@@ -124,4 +124,31 @@ class PlayerTest {
         player.drawCard(Fixture.DIAMONDS_JACK)
         assertEquals(false, player.isBust())
     }
+
+    @Test
+    fun `isBlackjack() - player is not blackjack but not busted`() {
+        val player = Player("player")
+        player.drawCard(Fixture.DIAMONDS_JACK)
+        player.drawCard(Fixture.DIAMONDS_QUEEN)
+        assertEquals(false, player.isBust())
+        assertEquals(false, player.isBlackjack())
+    }
+
+    @Test
+    fun `isBlackjack() - player is not blackjack but also busted`() {
+        val player = Player("player")
+        player.drawCard(Fixture.DIAMONDS_JACK)
+        player.drawCard(Fixture.DIAMONDS_QUEEN)
+        player.drawCard(Fixture.DIAMONDS_SIX)
+        assertEquals(true, player.isBust())
+        assertEquals(false, player.isBlackjack())
+    }
+
+    @Test
+    fun `isBlackjack() - player is blackjack`() {
+        val player = Player("player")
+        player.drawCard(Fixture.DIAMONDS_JACK)
+        player.drawCard(Fixture.DIAMONDS_ACE)
+        assertEquals(true, player.isBlackjack())
+    }
 }

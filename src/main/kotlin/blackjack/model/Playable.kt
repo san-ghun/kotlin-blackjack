@@ -16,6 +16,12 @@ interface Playable {
         return calculateHand() > BUST_LIMIT
     }
 
+    fun isBlackjack(): Boolean {
+        val hasTwoCards = hand.cards.size == 2
+        val hasTwentyOne = calculateHand() == BUST_LIMIT
+        return hasTwoCards && hasTwentyOne
+    }
+
     companion object {
         const val BUST_LIMIT = 21
     }
