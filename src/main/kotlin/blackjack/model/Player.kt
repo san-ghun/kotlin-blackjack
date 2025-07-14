@@ -16,8 +16,9 @@ data class Player(override val name: String) : Playable {
         return _hand.calculateHand()
     }
 
-    fun placeBets(amount: Int) {
+    fun placeBets(amount: Int): Player {
         _bet += amount
+        return this
     }
 
     fun resetBetting() {
