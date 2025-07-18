@@ -1,7 +1,14 @@
 package blackjack.model
 
 class Stats(val players: List<Player>, val dealer: Dealer) {
+    private var isDealerBlackjack = false
+    private var playerBoard = mapOf<Player, Result>()
     val earningMap: Map<Playable, Int> get() = payOutPotToEarnings()
+
+    init {
+        isDealerBlackjack = dealer.isBlackjack()
+        playerBoard = calculatePlayerBoard()
+    }
 
     private fun calculatePlayerBoard(): Map<Player, Result> {
         val board = mutableMapOf<Player, Result>()
@@ -15,68 +22,98 @@ class Stats(val players: List<Player>, val dealer: Dealer) {
     ) {
         val playerScore = player.calculateHand()
         val dealerScore = dealer.calculateHand()
-        when {
-            player.isBlackjack() -> board[player] = Result.BLACKJACK
-            player.isBust() -> board[player] = Result.LOSE
-            dealer.isBust() -> board[player] = Result.WIN
-            playerScore > dealerScore -> board[player] = Result.WIN
-            playerScore < dealerScore -> board[player] = Result.LOSE
-            else -> board[player] = Result.TIE
+        board[player] =
+            when {
+                player.isBlackjack() -> Result.BLACKJACK
+                player.isBust() -> Result.LOSE
+                dealer.isBust() -> Result.WIN
+                playerScore > dealerScore -> Result.WIN
+                playerScore < dealerScore -> Result.LOSE
+                else -> Result.TIE
+            }
+    }
+
+    fun payOutPotToEarnings(): Map<Playable, Int> {
+        var pot = players.sumOf { it.bet }
+        val earningsMap = mutableMapOf<Playable, Int>()
+
+        players.forEach { player ->
+            val result = playerBoard.getOrDefault(player, Result.LOSE)
+            val amount = calculatePayout(result, player.bet, isDealerBlackjack)
+            pot -= payoutImpactOnPot(result, player.bet, isDealerBlackjack)
+            earningsMap[player] = amount
+        }
+
+        earningsMap[dealer] = pot
+        return earningsMap.toMap()
+    }
+
+    private fun calculatePayout(
+        result: Result,
+        bet: Int,
+        dealerBlackjack: Boolean,
+    ): Int {
+        return if (dealerBlackjack) {
+            calculatePayoutWithDealerBlackjack(result, bet)
+        } else {
+            calculatePayoutWithDealerNonBlackjack(result, bet)
         }
     }
 
-    // TODO: add case for dealer with blackjack
-    fun payOutPotToEarnings(): Map<Playable, Int> {
-        val playerBoard = calculatePlayerBoard()
-        var pot = players.sumOf { it.bet }
-        val map = mutableMapOf<Playable, Int>()
-        val isDealerBlackjack = dealer.isBlackjack()
-        if (isDealerBlackjack) {
-            players.forEach { player ->
-                when {
-                    playerBoard[player] == Result.BLACKJACK -> {
-                        val amount = player.bet
-                        map[player] = 0
-                        pot -= amount
-                    }
-                    playerBoard[player] == Result.LOSE -> {
-                        val amount = player.bet
-                        map[player] = -amount
-                    }
-                    playerBoard[player] == Result.TIE -> {
-                        val amount = player.bet
-                        map[player] = 0
-                        pot -= amount
-                    }
-                }
-            }
-            map[dealer] = pot
-            return map.toMap()
+    private fun calculatePayoutWithDealerBlackjack(
+        result: Result,
+        bet: Int,
+    ): Int {
+        return when (result) {
+            Result.BLACKJACK, Result.TIE -> 0
+            Result.LOSE -> -bet
+            else -> 0
         }
-        players.forEach { player ->
-            when {
-                playerBoard[player] == Result.BLACKJACK -> {
-                    val amount = (player.bet * 1.5).toInt()
-                    map[player] = amount
-                    pot -= amount + player.bet
-                }
-                playerBoard[player] == Result.WIN -> {
-                    val amount = player.bet
-                    map[player] = amount
-                    pot -= amount * 2
-                }
-                playerBoard[player] == Result.LOSE -> {
-                    val amount = player.bet
-                    map[player] = -amount
-                }
-                playerBoard[player] == Result.TIE -> {
-                    val amount = player.bet
-                    map[player] = 0
-                    pot -= amount
-                }
-            }
+    }
+
+    private fun calculatePayoutWithDealerNonBlackjack(
+        result: Result,
+        bet: Int,
+    ): Int {
+        return when (result) {
+            Result.BLACKJACK -> (bet * Result.BLACKJACK_BONUS).toInt()
+            Result.WIN -> bet
+            Result.TIE -> 0
+            Result.LOSE -> -bet
         }
-        map[dealer] = pot
-        return map.toMap()
+    }
+
+    private fun payoutImpactOnPot(
+        result: Result,
+        bet: Int,
+        dealerBlackjack: Boolean,
+    ): Int {
+        return if (dealerBlackjack) {
+            payoutImpactOnPotWithDealerBlackjack(result, bet)
+        } else {
+            payoutImpactOnPotWithDealerNonBlackjack(result, bet)
+        }
+    }
+
+    private fun payoutImpactOnPotWithDealerBlackjack(
+        result: Result,
+        bet: Int,
+    ): Int {
+        return when (result) {
+            Result.BLACKJACK, Result.TIE -> bet
+            else -> 0
+        }
+    }
+
+    private fun payoutImpactOnPotWithDealerNonBlackjack(
+        result: Result,
+        bet: Int,
+    ): Int {
+        return when (result) {
+            Result.BLACKJACK -> bet + (bet * Result.BLACKJACK_BONUS).toInt()
+            Result.WIN -> bet * 2
+            Result.TIE -> bet
+            else -> 0
+        }
     }
 }
